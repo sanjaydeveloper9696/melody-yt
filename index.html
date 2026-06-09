@@ -367,7 +367,7 @@
         <div>
             <article class="panel video-panel">
                 <div class="player-wrap">
-                    <iframe id="mainYoutubePlayer" class="main-player" title="Devotional Player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <iframe id="mainYoutubePlayer" class="main-player" title="Devotional Player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                 </div>
                 <div class="details">
                     <h2 id="currentVideoTitle">Hanuman Chalisa Complete Path | Hearts Touched | Daily Hanuman Bhakti Song HD</h2>
@@ -632,7 +632,8 @@
     function getEmbedUrlWithLoop(videoId, allIds, autoplay = true) {
         // playlist param accepts comma separated IDs, loop=1 makes it replay the whole playlist
         const playlistParam = allIds.join(",");
-        let url = `https://www.youtube.com/embed/${videoId}?enablejsapi=1&loop=1&playlist=${playlistParam}&modestbranding=1&rel=0&playsinline=1`;
+        const origin = encodeURIComponent(window.location.origin);
+        let url = `https://www.youtube.com/embed/${videoId}?enablejsapi=1&loop=1&playlist=${playlistParam}&modestbranding=1&rel=0&playsinline=1&mute=1&origin=${origin}`;
         if (autoplay) url += "&autoplay=1";
         return url;
     }
@@ -748,6 +749,12 @@
         // But for your requirement: "loop main song chalte rahe" â€” loop=1 with playlist param does exactly that.
         // Also if the user clicks any playlist item, it loads that video with autoplay and Playlist param still ensures future looping.
     }
+
+    document.addEventListener("click", () => {
+        if (youtubePlayer?.playVideo) {
+            youtubePlayer.playVideo();
+        }
+    }, { once: true });
     
     // Re-initialize on any new video load to preserve loop meta? Already embed url includes playlist of all IDs.
     // Override loadVideoByIndex to always include full playlist param
